@@ -55,10 +55,10 @@ class PingServerHandler(BaseHTTPRequestHandler):
 		if not params.has_key('timeout') :
 			timeout = PING_TIMEOUT
 		else:
-			timeout = int(float(params['timeout'][0]))
+			timeout = float(params['timeout'][0])
 
 		res = self.__ping(host, timeout, count)
-		self.log_message("lost precent[%.3f]%%, artt[%.3f]ms, martt[%.3f]ms.", res[0], res[1], res[2])
+		self.log_message("lost precent[%s]%%, artt[%s]ms, martt[%s]ms.", res[0], res[1], res[2])
 		message = json.dumps(res)
 
 		self.send_response(200)
@@ -187,7 +187,7 @@ class PingServerHandler(BaseHTTPRequestHandler):
 			if delay != None:
 				delay = delay * 1000
 				plist.append(delay)
-
+			
 		# Find lost package percent
 		percent_lost = 100 - (len(plist) * 100 / count)
 
