@@ -27,6 +27,12 @@ ALLOW_URI = ("/getping")
 
 	
 class PingServerHandler(BaseHTTPRequestHandler):
+
+	def handle(self):
+		print 'handle'
+		#BaseHTTPRequestHandler.handle()
+		super().handle()
+
 	def do_GET(self):
 		parsed_path = urlparse.urlparse(self.path)
 		client_ip = self.client_address[0]
@@ -116,6 +122,7 @@ class PingServerHandler(BaseHTTPRequestHandler):
 			time_left = time_left - how_long_in_select
 			if time_left <= 0:
 				return
+			time.sleep(0.01)
 
 
 	def __send_one_ping(self, my_socket, dest_addr, id, psize):
@@ -205,11 +212,27 @@ def get_now_time():
  		year, month, day, hh, mm, ss)
 	return s
 
-if __name__=='__main__':
-	from BaseHTTPServer import HTTPServer
+def start_server():
 	port = len(sys.argv)>1 and int(sys.argv[1]) or 8181
 	server = HTTPServer(('',port),PingServerHandler)
-	print '[%s] Starting server, use <Ctrl-C> to stop' % get_now_time()
+	print '[%s] Starting server port:%d, use <Ctrl-C> to stop' % (get_now_time(),port)
 	server.serve_forever()
+	'''
+	from threading import Thread
+	for i in xrange(10):
+		thread = Thread(target=server.serve_forever)
+		thread.start()
+	'''
+	
+
+if __name__=='__main__':
+	from BaseHTTPServer import HTTPServer
+	start_server()
+	'''
+	from threading import Thread
+	for i in xrange(100):
+		thread = Thread(target=start_server)
+		thread.start()	
+	'''
 
 	
